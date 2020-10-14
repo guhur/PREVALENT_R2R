@@ -629,7 +629,8 @@ class BertModel(BertPreTrainedModel):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float)
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # Prepare head mask if needed
@@ -749,7 +750,8 @@ class BertImgModel(BertPreTrainedModel):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float) # fp16 compatibility
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # Prepare head mask if needed
@@ -823,7 +825,9 @@ class AddEncoder(nn.Module):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float)
+
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         for i, layer_module in enumerate(self.layer):
@@ -950,7 +954,8 @@ class BertAddModel(BertPreTrainedModel):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float)
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # Prepare head mask if needed
@@ -1175,7 +1180,8 @@ class VicModel(BertPreTrainedModel):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float)
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # Prepare head mask if needed
@@ -1211,7 +1217,8 @@ class VicModel(BertPreTrainedModel):
             img_seq_mask = torch.ones(batch_size, img_seq_len, dtype=attention_mask.dtype).to(attention_mask.device)
 
             extended_img_mask = img_seq_mask.unsqueeze(1).unsqueeze(2)
-            extended_img_mask = extended_img_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+            # extended_img_mask = extended_img_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+            extended_img_mask = extended_img_mask.to(dtype=torch.float)
             extended_img_mask = (1.0 - extended_img_mask) * -10000.0
             img_mask = extended_img_mask
 
@@ -1321,7 +1328,8 @@ class DicModel(BertPreTrainedModel):
         # positions we want to attend and -10000.0 for masked positions.
         # Since we are adding it to the raw scores before the softmax, this is
         # effectively the same as removing these entirely.
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        # extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+        extended_attention_mask = extended_attention_mask.to(dtype=torch.float)
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
         # Prepare head mask if needed
@@ -1361,7 +1369,8 @@ class DicModel(BertPreTrainedModel):
             img_seq_mask = torch.ones(batch_size, img_seq_len, dtype=attention_mask.dtype).to(attention_mask.device)
 
             extended_img_mask = img_seq_mask.unsqueeze(1).unsqueeze(2)
-            extended_img_mask = extended_img_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+            # extended_img_mask = extended_img_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
+            extended_img_mask = extended_img_mask.to(dtype=torch.float)
             extended_img_mask = (1.0 - extended_img_mask) * -10000.0
             img_mask = extended_img_mask
 

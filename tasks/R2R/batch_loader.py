@@ -102,20 +102,21 @@ def mask_tokens(inputs, tokenizer, args):
     labels = inputs.clone()
 
     # We sample a few tokens in each sequence for masked-LM training (with probability args.mlm_probability defaults to 0.15 in Bert/RoBERTa)
-    probability_matrix = torch.full(labels.shape, args.mlm_probability)
+    probability_matrix = torch.full(labels.shape, args.mlm_probability, dtype=torch.float)
     special_tokens_mask = [val in tokenizer.all_special_ids for val in labels.tolist()]
     att_mask = [val == tokenizer.pad_token_id for val in labels.tolist()]
-    probability_matrix.masked_fill_(torch.tensor(special_tokens_mask, dtype=torch.uint8), value=0.0)
+    # probability_matrix.masked_fill_(torch.tensor(special_tokens_mask, dtype=torch.uint8), value=0.0)
+    probability_matrix.masked_fill_(torch.tensor(special_tokens_mask, dtype=torch.bool), value=0.0)
     #masked_indices = torch.bernoulli(torch.full(labels.shape, args.mlm_probability)).type(torch.ByteTensor)
-    masked_indices = torch.bernoulli(probability_matrix).type(torch.ByteTensor)
+    masked_indices = torch.bernoulli(probability_matrix).bool()
 
-    attention_mask = torch.full(labels.shape, 1).masked_fill_(torch.tensor(att_mask, dtype=torch.uint8), value=0)
+    attention_mask = torch.full(labels.shape, True, dtype=torch.bool).masked_fill_(torch.tensor(att_mask, dtype=torch.bool), value=False)
     labels[~masked_indices] = -1  # We only compute loss on masked tokens
 
 
     # 80% of the time, we replace masked input tokens with tokenizer.mask_token ([MASK])
 
-    indices_replaced = torch.bernoulli(torch.full(labels.shape, 0.8)).type(torch.ByteTensor) & masked_indices
+    indices_replaced = torch.bernoulli(torch.full(labels.shape, 0.8, dtype=torch.float)).bool() & masked_indices
 
     inputs[indices_replaced] = tokenizer.convert_tokens_to_ids(tokenizer.mask_token)
 
@@ -124,7 +125,7 @@ def mask_tokens(inputs, tokenizer, args):
     # 10% of the time, we replace masked input tokens with random word
 
     #indices_random = torch.bernoulli(torch.full(labels.shape, 0.5)).bool() & masked_indices & ~indices_replaced
-    indices_random = torch.bernoulli(torch.full(labels.shape, 0.5)).type(torch.ByteTensor) & masked_indices & ~indices_replaced
+    indices_random = torch.bernoulli(torch.full(labels.shape, 0.5)).bool() & masked_indices & ~indices_replaced
 
     random_words = torch.randint(len(tokenizer), labels.shape, dtype=torch.long)
 

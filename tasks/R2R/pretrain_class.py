@@ -5,7 +5,7 @@ from model import  BertAddEncoder, BertImgEncoder,BertLangEncoder,BertAddSepEnco
 from vilmodel import BertAddModel,VicModel,DicModel
 import torch
 import torch.nn as nn
-import pdb
+import ipdb
 
 class HugAddActionPreTrain(BertPreTrainedModel):
     def __init__(self,config):
@@ -120,7 +120,6 @@ class DicAddActionPreTrain(BertPreTrainedModel):
     def forward(self, seq,labels,isnext=None, f_t_all = None,lang_mask=None):
 
         ctx, pooled_out = self.bert(seq, attention_mask=lang_mask,img_feats=f_t_all)
-
 
         cls_part = pooled_out
         lang_part = ctx
